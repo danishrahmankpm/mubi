@@ -32,7 +32,7 @@ export default function MovieCard({
         "
       />
 
-      {/* Gradient overlay */}
+
       <div
         className="
           absolute bottom-0 left-0 w-full 
