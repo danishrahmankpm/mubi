@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { Movie } from "../types/movietypes";
 import { fetchMovie } from "../state/MovieSlice";
 import type { AppDispatch, RootState } from "../state/Store";
+import { genres_util } from "../utils/genres";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { Movie } from "./types/movietypes";
 import { fetchMovie } from "./state/MovieSlice";
 import type { AppDispatch, RootState } from "./state/Store";
+import {genres_util}  from "./utils/genres";
+import {genre_map} from "./utils/genres"
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -27,19 +29,29 @@ export default function ExplorePage() {
   
   const filtered = useMemo(() => {
     const source = movies ?? []; 
-    const res = source.filter((m)=>{
-    return  m.title.toLowerCase().includes(query.trim().toLowerCase())
-    })
-      
-      
-    .map((m) => ({
+    const res = source
+      .map((m) => ({
         ...m,
         poster_path: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : "",
-      }));
+        genre_list: m.genre_ids.map(g=>genre_map[g])
+
+      }))
+      .filter((m) => {
+        const matchesTitle = m.title.toLowerCase().includes(query.trim().toLowerCase());
+        
+        const matchesGenre =
+          genre === "All genres" ? true : m.genre_list.includes(genre);
+
+        return matchesTitle && matchesGenre;
+    });
+
+      
+        
+    
 
     return res;
   }, [movies, query, genre, country, year, sortBy, nowShowing]);
-
+  console.log()
   
   if (loading || !movies) {
     return <p>loading</p>;
@@ -73,7 +85,7 @@ export default function ExplorePage() {
       <section className="max-w-7xl mx-auto px-6 py-10">
         <h1 className="text-4xl font-bold text-center">EXPLORE</h1>
         <p className="text-center text-sm text-gray-500 mt-2">
-          Browse genres. Or directors. Or double-award-winners. Find films you didn't know you were looking for.
+          Browse genres. Find films you didn't know you were looking for.
         </p>
       </section>
 
