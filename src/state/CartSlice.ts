@@ -14,9 +14,12 @@ const initial:Cart={
         addtoCart(state,action:PayloadAction<Movie>){
             state.cart.push(action.payload)
             state.totalPrice+=9.99
+        },
+        removefromCart(state,action:PayloadAction<number>){
+            state.cart.filter(m=>m.id!=action.payload)
         }
     }
 
  })
  export default cartSlice.reducer
- export const {addtoCart}=cartSlice.actions
+ export const {addtoCart,removefromCart}=cartSlice.actions

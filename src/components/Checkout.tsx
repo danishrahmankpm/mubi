@@ -2,9 +2,13 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import type { RootState } from "./state/Store";
+import type { RootState } from "../state/Store";
 
 
+// Generic, reusable Checkout component styled with Tailwind.
+// Designed to mirror the layout in the provided screenshot but
+// accepts generic props so it can be re-used in different apps
+// (eg. a Mubi-like checkout).
 
 export default function CheckoutPage({  logo = "Mubi",  }) {
   
