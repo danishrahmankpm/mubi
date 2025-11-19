@@ -6,6 +6,7 @@ import type { AppDispatch, RootState } from "./state/Store";
 import {genres_util}  from "./utils/genres";
 import {genre_map} from "./utils/genres"
 import { lang_map } from "./utils/lang";
+import { extractYear } from "./utils/years";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -13,7 +14,7 @@ export default function ExplorePage() {
   const [language, setLanguage] = useState("All languages");
   const [year, setYear] = useState("All years");
   const [sortBy, setSortBy] = useState("Most Popular");
-  const [nowShowing, setNowShowing] = useState(false);
+  /* const [nowShowing, setNowShowing] = useState(false); */
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -35,19 +36,19 @@ export default function ExplorePage() {
         ...m,
         poster_path: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : "",
         genre_list: m.genre_ids.map(g=>genre_map[g]),
-        
-        lang: lang_map[m.original_language] ?? m.original_language
+        lang: lang_map[m.original_language] ?? m.original_language,
+        year_range:extractYear(m.release_date.substring(0,4))
 
       }))
       .filter((m) => {
         const matchesTitle = m.title.toLowerCase().includes(query.trim().toLowerCase());
-        
         const matchesGenre =
           genre === "All genres" ? true : m.genre_list.includes(genre);
         const matchesLanguage=
           language === "All languages"? true:m.lang===language
-          
-        return matchesTitle && matchesGenre && matchesLanguage;
+        const matchesYear=
+          year === "All years"?true:m.year_range===year
+        return matchesTitle && matchesGenre && matchesLanguage && matchesYear;
     });
 
       
@@ -55,8 +56,8 @@ export default function ExplorePage() {
     
 
     return res;
-  }, [movies, query, genre, language, year, sortBy, nowShowing]);
-  console.log()
+  }, [movies, query, genre, language, year, sortBy]);
+  
   
   if (loading || !movies) {
     return <p>loading</p>;
@@ -102,6 +103,10 @@ export default function ExplorePage() {
                 <option>All genres</option>
                 <option>Drama</option>
                 <option>Documentary</option>
+                <option>Action</option>
+                <option>Family</option>
+                <option>Western</option>
+
               </select>
               <select value={language} onChange={(e) => setLanguage(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
                 <option>All languages</option>
@@ -113,8 +118,10 @@ export default function ExplorePage() {
               </select>
               <select value={year} onChange={(e) => setYear(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
                 <option>All years</option>
-                <option>2023</option>
-                <option>2019</option>
+                <option>2020s</option>
+                <option>2010s</option>
+                <option>2000s</option>
+
               </select>
             </div>
 
@@ -125,10 +132,7 @@ export default function ExplorePage() {
                 <option>Year: New to Old</option>
               </select>
 
-              <label className="flex items-center gap-2 text-sm">
-                <span className="text-gray-600">NOW SHOWING</span>
-                <input type="checkbox" checked={nowShowing} onChange={(e) => setNowShowing(e.target.checked)} className="w-5 h-5" />
-              </label>
+              
             </div>
           </div>
         </div>
