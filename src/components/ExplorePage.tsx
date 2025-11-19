@@ -7,6 +7,7 @@ import type { AppDispatch, RootState } from "../state/Store";
 import {genre_map} from "../utils/genres"
 import { lang_map } from "../utils/lang";
 import { extractYear } from "../utils/years";
+import { Link } from "react-router-dom";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -97,7 +98,7 @@ export default function ExplorePage() {
             </div>
           </div>
           <nav className="flex gap-6 items-center text-sm text-gray-600">
-            
+            <Link className="hover:underline" to={"/checkout"}>CART</Link>
             <a className="hover:underline">LOG IN</a>
           </nav>
         </div>
