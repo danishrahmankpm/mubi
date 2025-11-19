@@ -14,7 +14,7 @@ export default function ExplorePage() {
   const [language, setLanguage] = useState("All languages");
   const [year, setYear] = useState("All years");
   const [sortBy, setSortBy] = useState("Most Popular");
-  /* const [nowShowing, setNowShowing] = useState(false); */
+ 
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +49,23 @@ export default function ExplorePage() {
         const matchesYear=
           year === "All years"?true:m.year_range===year
         return matchesTitle && matchesGenre && matchesLanguage && matchesYear;
-    });
+    }).sort((a, b) => {
+          if (sortBy === "Most Popular") {
+            return (b.popularity ?? 0) - (a.popularity ?? 0);
+          }
+          if (sortBy === "Year: New to Old") {
+            const y1=(a.release_date.substring(0,4))
+            const y2=(b.release_date.substring(0,4))
+            if(y2 && y1) return Number(y2)-Number(y1)
+            
+          }
+          if (sortBy === "Year: Old to New") {
+            const y1=(a.release_date.substring(0,4))
+            const y2=(b.release_date.substring(0,4))
+            if(y2 && y1) return Number(y1)-Number(y2)
+          }
+          return 0;
+        });
 
       
         
@@ -130,6 +146,7 @@ export default function ExplorePage() {
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
                 <option>Most Popular</option>
                 <option>Year: New to Old</option>
+                <option>Year: Old to New</option>
               </select>
 
               
