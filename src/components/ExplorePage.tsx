@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import type { Movie } from "../types/movietypes";
 import { fetchMovie } from "../state/MovieSlice";
 import type { AppDispatch, RootState } from "../state/Store";
-import { genres_util } from "../utils/genres";
+import {genres_util}  from "../utils/genres";
+import {genre_map} from "../utils/genres"
+import { lang_map } from "../utils/lang";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("All genres");
-  const [country, setCountry] = useState("All countries");
+  const [language, setLanguage] = useState("All languages");
   const [year, setYear] = useState("All years");
   const [sortBy, setSortBy] = useState("Most Popular");
   const [nowShowing, setNowShowing] = useState(false);
@@ -29,16 +31,32 @@ export default function ExplorePage() {
   const filtered = useMemo(() => {
     const source = movies ?? []; 
     const res = source
-      
-      
       .map((m) => ({
         ...m,
         poster_path: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : "",
-      }));
+        genre_list: m.genre_ids.map(g=>genre_map[g]),
+        
+        lang: lang_map[m.original_language] ?? m.original_language
+
+      }))
+      .filter((m) => {
+        const matchesTitle = m.title.toLowerCase().includes(query.trim().toLowerCase());
+        
+        const matchesGenre =
+          genre === "All genres" ? true : m.genre_list.includes(genre);
+        const matchesLanguage=
+          language === "All languages"? true:m.lang===language
+          
+        return matchesTitle && matchesGenre && matchesLanguage;
+    });
+
+      
+        
+    
 
     return res;
-  }, [movies, query, genre, country, year, sortBy, nowShowing]);
-
+  }, [movies, query, genre, language, year, sortBy, nowShowing]);
+  console.log()
   
   if (loading || !movies) {
     return <p>loading</p>;
@@ -62,8 +80,7 @@ export default function ExplorePage() {
             </div>
           </div>
           <nav className="flex gap-6 items-center text-sm text-gray-600">
-            <a className="hover:underline">NOW SHOWING</a>
-            <a className="hover:underline">NOTEBOOK</a>
+            
             <a className="hover:underline">LOG IN</a>
           </nav>
         </div>
@@ -72,7 +89,7 @@ export default function ExplorePage() {
       <section className="max-w-7xl mx-auto px-6 py-10">
         <h1 className="text-4xl font-bold text-center">EXPLORE</h1>
         <p className="text-center text-sm text-gray-500 mt-2">
-          Browse genres. Or directors. Or double-award-winners. Find films you didn't know you were looking for.
+          Browse genres. Find films you didn't know you were looking for.
         </p>
       </section>
 
@@ -86,10 +103,13 @@ export default function ExplorePage() {
                 <option>Drama</option>
                 <option>Documentary</option>
               </select>
-              <select value={country} onChange={(e) => setCountry(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
-                <option>All countries</option>
-                <option>France</option>
-                <option>Japan</option>
+              <select value={language} onChange={(e) => setLanguage(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
+                <option>All languages</option>
+                <option>English</option>
+                <option>French</option>
+                <option>Spanish</option>
+                <option>German</option>
+                <option>Japanese</option>
               </select>
               <select value={year} onChange={(e) => setYear(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
                 <option>All years</option>
