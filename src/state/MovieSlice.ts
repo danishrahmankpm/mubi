@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import type { Movie } from "../types/movietypes";
+import type { Movie } from "../types/types.ts";
 
 export const fetchMovie = createAsyncThunk<Movie[], void>(
   "movie/fetchMovie",

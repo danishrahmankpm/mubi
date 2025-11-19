@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { Movie } from "./types/movietypes";
+import type { Movie } from "./types/types.ts";
 import { fetchMovie } from "./state/MovieSlice";
 import type { AppDispatch, RootState } from "./state/Store";
 import {genres_util}  from "./utils/genres";
