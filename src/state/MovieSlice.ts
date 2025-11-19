@@ -44,6 +44,7 @@ const movieSlice = createSlice({
     setMovie(state, action: PayloadAction<Movie[]>) {
       state.data = action.payload;
     },
+    
   },
   extraReducers: (builder) => {
     builder

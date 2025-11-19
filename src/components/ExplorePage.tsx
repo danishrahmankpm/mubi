@@ -8,6 +8,7 @@ import {genre_map} from "../utils/genres"
 import { lang_map } from "../utils/lang";
 import { extractYear } from "../utils/years";
 import { Link } from "react-router-dom";
+import MovieCard from "./MovieCard";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -21,7 +22,7 @@ export default function ExplorePage() {
 
  
   useEffect(() => {
-    dispatch(fetchMovie());
+    dispatch(fetchMovie())
   }, [dispatch]);
 
   const movies = useSelector((state: RootState) => state.movie.data);
@@ -157,22 +158,27 @@ export default function ExplorePage() {
       </section>
 
       
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filtered.map((m) => (
-            <article key={m.id} className="relative group overflow-hidden rounded-md shadow-md">
-              <img src={m.poster_path} alt={m.title} className="w-full h-52 object-cover transform group-hover:scale-105 transition duration-300" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-100 flex items-end p-4">
-                <div>
-                  <div className="text-white text-lg font-bold leading-tight">{m.title}</div>
-                </div>
-              </div>
-            </article>
+    <div className="w-full flex justify-center">
+      <div className="flex flex-wrap gap-2 justify-center">
+        {filtered.map((m) => (
+            <MovieCard
+              key={m.id}
+              id={m.id}
+              title={m.title}
+              price={9.99}
+              imgUrl={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+            />
           ))}
-        </div>
+        
 
-        {filtered.length === 0 && <div className="mt-8 text-center text-gray-500">No films match your filters.</div>}
-      </main>
+        {filtered.length === 0 && (
+          <div className="mt-16 text-center text-gray-500 text-lg">
+            No films match your filters.
+          </div>
+        )}
+      </div>
+    </div>
+
 
       
 

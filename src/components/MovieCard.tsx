@@ -1,50 +1,36 @@
-export default function MovieCard({
-  imgUrl,
-  title,
-  year,
-}: {
-  imgUrl: string;
-  title: string;
-  year: number;
-}) {
+import React from "react";
+import { addtoCart } from "../state/CartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../state/Store";
+
+export default function MovieCard({imgUrl,title,price,id}: {imgUrl: string;title: string;price: number;id:number}) {
+  const dispatch=useDispatch()
+  const movie=useSelector((state:RootState)=>state.movie.data?.find(m=>m.id===id))
   return (
-    <button
-      className="
-        relative 
-        overflow-hidden 
-        
-        shadow-md 
-        hover:shadow-xl 
-        transition 
-        group
-        w-full sm:w-1/2 md:w-1/3 lg:w-1/4
-        lg:h-40
-      "
-    >
-      <img
-        src={imgUrl}
-        alt={title}
-        className="
-          w-full h-45 object-contain
-          transition-all duration-300 
-          group-hover:scale-105
-          hover:cursor-pointer hover:opacity-65
-        "
-      />
+    <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col">
+      <button className="block w-full overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-transform">
+        <img
+          src={imgUrl}
+          alt={title}
+          className="w-full h-48 object-cover transition-transform duration-500 hover:scale-105"
+        />
+      </button>
 
+     
+      <div className="mt-3 flex items-center justify-between text-sm w-full">
+        <div className="text-gray-700 font-medium">
+          {`$${price}`}
+        </div>
+        <button
+          disabled={!movie}
+          onClick={() => movie && dispatch(addtoCart(movie))}
+          className="text-xs font-semibold uppercase tracking-wide px-3 py-2 rounded-sm transition-colors 
+            border-none hover:bg-black hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Add to cart
+        </button>
 
-      <div
-        className="
-          absolute bottom-0 left-0 w-full 
-          bg-gradient-to-t from-black/80 to-transparent
-          p-4
-        "
-      >
-        <p className="text-white font-semibold text-lg leading-tight">
-          {title}
-        </p>
-        <p className="text-white/80 text-sm">{year}</p>
       </div>
-    </button>
+    </div>
   );
 }
