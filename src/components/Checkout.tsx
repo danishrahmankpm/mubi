@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import Swal from "sweetalert2";
 import { type AppDispatch, type RootState } from "../state/Store";
 import { removefromCart } from "../state/CartSlice";
 
@@ -48,11 +48,29 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
         <div className="text-xs text-gray-500">{item.original_language}</div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 text-">
         <div className="font-semibold">$9.99</div>
 
         
-        <button className="hover:text-red-600 transition" onClick={()=>{dispatch(removefromCart(item.id))}}>
+        <button
+            className="hover:text-red-600 transition"
+            onClick={() => {
+              Swal.fire({
+                title: "Remove item?",
+                showCancelButton: true,
+                confirmButtonColor: "black",
+                cancelButtonColor: "black",
+                confirmButtonText: "Yes, remove",
+                customClass: {
+                title: "text-2xl text-black font-bold",   
+                },
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  dispatch(removefromCart(item.id));
+                }
+              });
+            }}
+          >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             fill="none" 
