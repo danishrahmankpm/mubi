@@ -21,14 +21,18 @@ export default function ExplorePage() {
 
   const dispatch = useDispatch<AppDispatch>();
   const {isAuthenticated,isLoading,user,loginWithRedirect,logout}=useAuth0()
+  const movies = useSelector((state: RootState) => state.movie.data);
+  const loading = useSelector((state: RootState) => state.movie.loading);
  
   useEffect(() => {
+    if(movies && movies.length>0){
+      return;
+    }
     console.log("inside useeffect")
     dispatch(fetchMovie())
   }, [dispatch]);
 
-  const movies = useSelector((state: RootState) => state.movie.data);
-  const loading = useSelector((state: RootState) => state.movie.loading);
+  
   
   
 
@@ -79,7 +83,7 @@ export default function ExplorePage() {
   }, [movies, query, genre, language, year, sortBy]);
   
   
-  if (loading || !movies) {
+  if (loading || !movies || isLoading) {
     return <p>loading</p>;
   }
   
