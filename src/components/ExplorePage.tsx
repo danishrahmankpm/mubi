@@ -9,6 +9,7 @@ import { lang_map } from "../utils/lang";
 import { extractYear } from "../utils/years";
 import { Link } from "react-router-dom";
 import MovieCard from "./MovieCard";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -19,7 +20,7 @@ export default function ExplorePage() {
  
 
   const dispatch = useDispatch<AppDispatch>();
-
+  const {isAuthenticated,isLoading,user,loginWithRedirect,logout}=useAuth0()
  
   useEffect(() => {
     console.log("inside useeffect")
@@ -99,10 +100,13 @@ export default function ExplorePage() {
               />
             </div>
           </div>
-          <nav className="flex gap-6 items-center text-sm text-gray-600">
-            <Link className="hover:underline" to={"/checkout"}>CART</Link>
-            <a className="hover:underline">LOG IN</a>
-          </nav>
+          <div className="flex gap-6 items-center text-sm text-gray-600">
+            {!isAuthenticated
+              ? <button onClick={() => loginWithRedirect()} className="hover:underline">CART</button>
+              : <Link to="/checkout" className="hover:underline">CART</Link>
+            }
+            {!isAuthenticated&&(<button className="hover:underline" onClick={()=>loginWithRedirect()}>LOG IN</button>)}
+          </div>
         </div>
       </header>
 

@@ -61,9 +61,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
                 confirmButtonColor: "black",
                 cancelButtonColor: "black",
                 confirmButtonText: "Yes, remove",
-                customClass: {
-                title: "text-2xl text-black font-bold",   
-                },
+                
               }).then((result) => {
                 if (result.isConfirmed) {
                   dispatch(removefromCart(item.id));
