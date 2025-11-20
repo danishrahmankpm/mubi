@@ -21,6 +21,11 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
   return (
     <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       <header className="bg-black text-white px-6 py-4">
+        <button
+          onClick={() => window.history.back()}
+          className="text-white hover:text-gray-300 transition mr-4">
+          ← Back
+        </button>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="text-xl font-bold">{logo}</div>
           <div className="uppercase tracking-wider text-sm">Checkout</div>
@@ -46,7 +51,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
       <div className="flex items-center gap-4">
         <div className="font-semibold">$9.99</div>
 
-        {/* Trash Icon (Heroicons outline) */}
+        
         <button className="hover:text-red-600 transition" onClick={()=>{dispatch(removefromCart(item.id))}}>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -74,7 +79,6 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
     </div>
   </section>
 
-  {/* RIGHT (1/3): Summary + Payment */}
   <aside className="lg:col-span-1 space-y-6">
     <div className="border rounded p-6 shadow-sm">
       <h3 className="text-sm font-semibold">CART SUMMARY</h3>
