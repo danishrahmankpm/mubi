@@ -22,12 +22,13 @@ export default function ExplorePage() {
 
  
   useEffect(() => {
+    console.log("inside useeffect")
     dispatch(fetchMovie())
   }, [dispatch]);
 
   const movies = useSelector((state: RootState) => state.movie.data);
   const loading = useSelector((state: RootState) => state.movie.loading);
-
+  
   
 
   

@@ -1,14 +1,17 @@
 
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import type { RootState } from "../state/Store";
+import { type AppDispatch, type RootState } from "../state/Store";
+import { removefromCart } from "../state/CartSlice";
 
 
 
 export default function CheckoutPage({  logo = "Mubi",  }) {
   
   const cartItems=useSelector((state:RootState)=>state.cart.cart)
+  const dispatch=useDispatch<AppDispatch>()
+  const total=useSelector((state:RootState)=>state.cart.totalPrice)
   const [payment, setPayment] = useState("card");
   
 
@@ -31,13 +34,34 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
 
     
     {cartItems.map(item => (
-      <div key={item.id} className="border rounded p-4 flex justify-between">
-        <div>
-          <div className="font-medium">{item.title}</div>
-          <div className="text-xs text-gray-500">{item.original_language}</div>
-        </div>
-        <div className="font-semibold">${item.price}</div>
+      <div 
+      key={item.id} 
+      className="flex justify-between items-center py-4 border-b"
+    >
+      <div>
+        <div className="font-medium">{item.title}</div>
+        <div className="text-xs text-gray-500">{item.original_language}</div>
       </div>
+
+      <div className="flex items-center gap-4">
+        <div className="font-semibold">$9.99</div>
+
+        {/* Trash Icon (Heroicons outline) */}
+        <button className="hover:text-red-600 transition" onClick={()=>{dispatch(removefromCart(item.id))}}>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth="1.5" 
+            stroke="currentColor" 
+            className="w-5 h-5"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 7.5h12m-9 3.75v6m6-6v6M9.75 4.5h4.5M4.5 7.5h15l-.75 12.75A2.25 2.25 0 0116.5 22.5h-9a2.25 2.25 0 01-2.25-2.25L4.5 7.5z" />
+          </svg>
+        </button>
+  </div>
+</div>
+
     ))}
 
     <div className="flex items-center justify-between pt-4">
@@ -59,7 +83,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
 
       <div className="flex justify-between text-sm">
         <div>Subtotal</div>
-        <div className="font-semibold">$21.98</div>
+        <div className="font-semibold"></div>
       </div>
 
       <div className="flex justify-between text-sm mt-2">
@@ -69,17 +93,10 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
 
       <div className="flex justify-between text-sm mt-2">
         <div>Estimated Total</div>
-        <div className="font-semibold text-lg">$21.98</div>
+        <div className="font-semibold text-lg">{total}</div>
       </div>
 
-      <div className="mt-6 text-xs text-gray-500 grid grid-cols-1 gap-4">
-        <div className="flex items-start gap-3">
-          <div>
-            <div className="font-medium">100 DAY HOME TRIAL</div>
-            <div className="text-xs text-gray-500">Try it at home for 100 days</div>
-          </div>
-        </div>
-      </div>
+      
     </div>
 
     <section>
@@ -110,7 +127,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
 </main>
 
       <footer className="bg-black text-white px-6 py-6 mt-auto">
-        <div className="max-w-6xl mx-auto text-xs">© Your Company</div>
+        <div className="max-w-6xl mx-auto text-xs">© Mubi</div>
       </footer>
     </div>
   );

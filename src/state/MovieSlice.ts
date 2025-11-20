@@ -49,16 +49,19 @@ const movieSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovie.pending, (state) => {
+        
         state.loading = true;
         state.error = null;
       })
       
       .addCase(fetchMovie.fulfilled, (state, action) => {
+        console.log("api ok")
         state.loading = false;
         console.log(action.payload)
         state.data = action.payload;
       })
       .addCase(fetchMovie.rejected, (state, action) => {
+        console.log("api fail")
         state.loading = false;
         state.error = action.error.message ?? "Failed to fetch movie";
       });

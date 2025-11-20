@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Cart, Movie } from "../types/types";
 
+
 const initial:Cart={
     cart:[],
     totalPrice:0
@@ -16,7 +17,9 @@ const initial:Cart={
             state.totalPrice+=9.99
         },
         removefromCart(state,action:PayloadAction<number>){
-            state.cart.filter(m=>m.id!=action.payload)
+            
+            state.cart=state.cart.filter(m=>m.id!=action.payload)
+            state.totalPrice-=9.99
         }
     }
 
