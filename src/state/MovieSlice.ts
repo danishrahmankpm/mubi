@@ -1,27 +1,28 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { Movie } from "../types/types.ts";
+import type { Root } from "../types/types.ts";
 
-export const fetchMovie = createAsyncThunk<Movie[], void>(
+export const fetchMovie = createAsyncThunk(
   "movie/fetchMovie",
-  async () => {
-    const res = await axios.get<{ results: Movie[] }>(
+  async (page:number) => {
+    const res = await axios.get(
       "https://api.themoviedb.org/3/movie/popular",
       {
         params: {
           language: "en-US",
-          page: 1,
+          page: page,
           api_key: "9ad65dc78032dafb93a33fd0c77710d6",
         },
       }
     );
 
-    return res.data.results;
+    return res.data;
   }
 );
 
 export interface MovieState {
-  data: Movie[] | null;
+  data: Root| null;
   loading: boolean;
   error: string | null;
 }
@@ -42,7 +43,8 @@ const movieSlice = createSlice({
       state.loading = false;
     },
     setMovie(state, action: PayloadAction<Movie[]>) {
-      state.data = action.payload;
+      if(state.data)state.data.results = action.payload;
+      
     },
     
   },

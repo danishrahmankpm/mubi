@@ -10,6 +10,7 @@ import { extractYear } from "../utils/years";
 import { Link } from "react-router-dom";
 import MovieCard from "./MovieCard";
 import { useAuth0 } from "@auth0/auth0-react";
+import { MoviePagination } from "./Pagination";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -21,7 +22,7 @@ export default function ExplorePage() {
 
   const dispatch = useDispatch<AppDispatch>();
   const {isAuthenticated,isLoading,user,loginWithRedirect,logout}=useAuth0()
-  const movies = useSelector((state: RootState) => state.movie.data);
+  const movies = useSelector((state: RootState) => state.movie.data?.results);
   const loading = useSelector((state: RootState) => state.movie.loading);
  
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function ExplorePage() {
       return;
     }
     console.log("inside useeffect")
-    dispatch(fetchMovie())
+    dispatch(fetchMovie(1))
   }, [dispatch]);
 
   
@@ -72,6 +73,9 @@ export default function ExplorePage() {
             const y2=(b.release_date.substring(0,4))
             if(y2 && y1) return Number(y1)-Number(y2)
           }
+        if (sortBy=="Rating"){
+          return (b.vote_average?? 0)-(a.vote_average ?? 0)
+        }
           return 0;
         });
 
@@ -84,6 +88,7 @@ export default function ExplorePage() {
   
   
   if (loading || !movies || isLoading) {
+    
     return <p>loading</p>;
   }
   
@@ -156,8 +161,8 @@ export default function ExplorePage() {
               <div className="text-sm text-gray-600">SORT BY:</div>
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
                 <option>Most Popular</option>
-                <option>Year: New to Old</option>
-                <option>Year: Old to New</option>
+                <option>Rating</option>
+                
               </select>
 
               
@@ -190,7 +195,7 @@ export default function ExplorePage() {
 
 
       
-
+      <MoviePagination />
       <footer className="h-24" />
     </div>
   );

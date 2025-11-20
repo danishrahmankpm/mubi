@@ -6,7 +6,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export default function MovieCard({imgUrl,title,price,id}: {imgUrl: string;title: string;price: number;id:number}) {
   const dispatch=useDispatch()
-  const movie=useSelector((state:RootState)=>state.movie.data?.find(m=>m.id===id))
+  const movie=useSelector((state:RootState)=>state.movie.data?.results.find(m=>m.id===id))
   const {isAuthenticated,isLoading,user,loginWithRedirect,logout}=useAuth0()
   return (
     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col">
