@@ -14,12 +14,12 @@ const initial:Cart={
     reducers:{
         addtoCart(state,action:PayloadAction<Movie>){
             state.cart.push(action.payload)
-            state.totalPrice+=9.99
+            state.totalPrice+=10
         },
         removefromCart(state,action:PayloadAction<number>){
             
             state.cart=state.cart.filter(m=>m.id!=action.payload)
-            state.totalPrice-=9.99
+            state.totalPrice-=10
         }
     }
 

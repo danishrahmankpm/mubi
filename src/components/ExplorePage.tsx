@@ -1,202 +1,126 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-/* import type { Movie } from "../types/movietypes"; */
 import { fetchMovie } from "../state/MovieSlice";
 import type { AppDispatch, RootState } from "../state/Store";
-/* import {genres_util}  from "../utils/genres"; */
-import {genre_map} from "../utils/genres"
-import { lang_map } from "../utils/lang";
-import { extractYear } from "../utils/years";
 import { Link } from "react-router-dom";
 import MovieCard from "./MovieCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import { MoviePagination } from "./Pagination";
+import LoadingPage from "./LoadingPage";
+import { setEndpoint } from "../state/MovieSlice";
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
-  const [genre, setGenre] = useState("All genres");
-  const [language, setLanguage] = useState("All languages");
-  const [year, setYear] = useState("All years");
-  const [sortBy, setSortBy] = useState("Most Popular");
- 
+  const [sortByEndpoint, setSortByEndpoint] = useState("popular"); 
 
   const dispatch = useDispatch<AppDispatch>();
-  const {isAuthenticated,isLoading,user,loginWithRedirect,logout}=useAuth0()
+  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const movies = useSelector((state: RootState) => state.movie.data?.results);
+  const page = useSelector((state: RootState) => state.movie.data?.page);
   const loading = useSelector((state: RootState) => state.movie.loading);
+  
+
  
   useEffect(() => {
-    if(movies && movies.length>0){
-      return;
-    }
-    console.log("inside useeffect")
-    dispatch(fetchMovie(1))
-  }, [dispatch]);
-
-  
-  
-  
-
-  
-  const filtered = useMemo(() => {
-    const source = movies ?? []; 
-    const res = source
-      .map((m) => ({
-        ...m,
-        poster_path: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : "",
-        genre_list: m.genre_ids.map(g=>genre_map[g]),
-        lang: lang_map[m.original_language] ?? m.original_language,
-        year_range:extractYear(m.release_date.substring(0,4))
-
-      }))
-      .filter((m) => {
-        const matchesTitle = m.title.toLowerCase().includes(query.trim().toLowerCase());
-        const matchesGenre =
-          genre === "All genres" ? true : m.genre_list.includes(genre);
-        const matchesLanguage=
-          language === "All languages"? true:m.lang===language
-        const matchesYear=
-          year === "All years"?true:m.year_range===year
-        return matchesTitle && matchesGenre && matchesLanguage && matchesYear;
-    }).sort((a, b) => {
-          if (sortBy === "Most Popular") {
-            return (b.popularity ?? 0) - (a.popularity ?? 0);
-          }
-          if (sortBy === "Year: New to Old") {
-            const y1=(a.release_date.substring(0,4))
-            const y2=(b.release_date.substring(0,4))
-            if(y2 && y1) return Number(y2)-Number(y1)
-            
-          }
-          if (sortBy === "Year: Old to New") {
-            const y1=(a.release_date.substring(0,4))
-            const y2=(b.release_date.substring(0,4))
-            if(y2 && y1) return Number(y1)-Number(y2)
-          }
-        if (sortBy=="Rating"){
-          return (b.vote_average?? 0)-(a.vote_average ?? 0)
-        }
-          return 0;
-        });
-
-      
-        
     
+    dispatch(setEndpoint(sortByEndpoint))
+    dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint }));
+  }, [dispatch, sortByEndpoint]);
 
-    return res;
-  }, [movies, query, genre, language, year, sortBy]);
   
-  
-  if (loading || !movies || isLoading) {
-    
-    return <p>loading</p>;
+
+  if (loading || isLoading || !page || !movies) {
+    return <LoadingPage />;
   }
+  const filteredMovies = movies.filter((m) =>m.title.toLowerCase().includes(query.toLowerCase()))
   
+
+  
+
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      
-      <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="text-2xl font-extrabold tracking-tight">MUBI</div>
-            <div className="hidden sm:block w-[420px]">
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
-                className="w-full px-3 py-2 rounded-md border bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              />
-            </div>
-          </div>
-          <div className="flex gap-6 items-center text-sm text-gray-600">
-            {!isAuthenticated
-              ? <button onClick={() => loginWithRedirect()} className="hover:underline">CART</button>
-              : <Link to="/checkout" className="hover:underline">CART</Link>
-            }
-            {!isAuthenticated&&(<button className="hover:underline" onClick={()=>loginWithRedirect()}>LOG IN</button>)}
-          </div>
-        </div>
-      </header>
-
-      <section className="max-w-7xl mx-auto px-6 py-10">
-        <h1 className="text-4xl font-bold text-center">EXPLORE</h1>
-        <p className="text-center text-sm text-gray-500 mt-2">
-          Browse genres. Find films you didn't know you were looking for.
-        </p>
-      </section>
-
- 
-      <section className="max-w-7xl mx-auto px-6">
-        <div className="bg-white p-6 rounded-md shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex gap-3 items-center flex-wrap">
-              <select value={genre} onChange={(e) => setGenre(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
-                <option>All genres</option>
-                <option>Drama</option>
-                <option>Documentary</option>
-                <option>Action</option>
-                <option>Family</option>
-                <option>Western</option>
-
-              </select>
-              <select value={language} onChange={(e) => setLanguage(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
-                <option>All languages</option>
-                <option>English</option>
-                <option>French</option>
-                <option>Spanish</option>
-                <option>German</option>
-                <option>Japanese</option>
-              </select>
-              <select value={year} onChange={(e) => setYear(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
-                <option>All years</option>
-                <option>2020s</option>
-                <option>2010s</option>
-                <option>2000s</option>
-
-              </select>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">SORT BY:</div>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2 border rounded-md bg-white">
-                <option>Most Popular</option>
-                <option>Rating</option>
-                
-              </select>
-
-              
-            </div>
-          </div>
-        </div>
-      </section>
-
-      
-    <div className="w-full flex justify-center">
-      <div className="flex flex-wrap gap-2 justify-center">
-        {filtered.map((m) => (
-            <MovieCard
-              key={m.id}
-              id={m.id}
-              title={m.title}
-              price={9.99}
-              imgUrl={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+  <div className="min-h-screen bg-black text-white">
+    <header className="bg-black border-b border-white/20">
+      <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="text-2xl font-extrabold tracking-tight">Movies</div>
+          <div className="hidden sm:block w-[420px]">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              className="w-full px-3 py-2 rounded-md border border-white/30 bg-black text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
-          ))}
-        
+          </div>
+        </div>
 
-        {filtered.length === 0 && (
-          <div className="mt-16 text-center text-gray-500 text-lg">
+        <div className="flex gap-6 items-center text-sm text-white/70">
+          {!isAuthenticated ? (
+            <button onClick={() => loginWithRedirect()} className="hover:underline">
+              CART
+            </button>
+          ) : (
+            <Link to="/checkout" className="hover:underline">
+              CART
+            </Link>
+          )}
+          {!isAuthenticated && (
+            <button className="hover:underline" onClick={() => loginWithRedirect()}>
+              LOG IN
+            </button>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <section className="max-w-7xl mx-auto px-6 py-10">
+      <h1 className="text-4xl font-bold text-center">EXPLORE</h1>
+      <p className="text-center text-sm text-white/60 mt-2">
+        Browse genres. Find films you didn't know you were looking for.
+      </p>
+    </section>
+
+    <section className="max-w-7xl mx-auto px-6">
+      <div className="bg-black p-6 rounded-md shadow-sm border-none">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-white/70">SORT BY:</div>
+            <select
+              value={sortByEndpoint}
+              onChange={(e) => setSortByEndpoint(e.target.value)}
+              className="px-3 py-2 border border-white/30 rounded-md bg-black text-white"
+            >
+              <option value="popular">Popular</option>
+              <option value="top_rated">Rating</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div className="w-screen flex justify-center">
+      <div className="flex flex-wrap gap-2 justify-center">
+        {filteredMovies.map((m) => (
+          <MovieCard
+            key={m.id}
+            id={m.id}
+            title={m.title}
+            price={10}
+            imgUrl={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+          />
+        ))}
+
+        {filteredMovies.length === 0 && (
+          <div className="mt-16 text-center text-white/60 text-lg">
             No films match your filters.
           </div>
         )}
       </div>
     </div>
 
+    <MoviePagination />
+    <footer className="h-24" />
+  </div>
+);
 
-      
-      <MoviePagination />
-      <footer className="h-24" />
-    </div>
-  );
 }

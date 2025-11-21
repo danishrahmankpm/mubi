@@ -17,11 +17,12 @@ export function MoviePagination() {
 
   const page = useSelector((s: RootState) => s.movie.data?.page)
   const totalPages = useSelector((s: RootState) => s.movie.data?.total_pages)
+  const sortByEndpoint=useSelector((s:RootState)=>s.movie.sortByEndpoint)
 
   const goToPage = (p: number) => {
     if (!totalPages) return
     if (p < 1 || p > totalPages) return
-    dispatch(fetchMovie(p))
+    dispatch(fetchMovie({ page: p, endpoint: sortByEndpoint }))
   }
 
   if (!page || !totalPages) {

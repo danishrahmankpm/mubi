@@ -7,7 +7,7 @@ import { removefromCart } from "../state/CartSlice";
 
 
 
-export default function CheckoutPage({  logo = "Mubi",  }) {
+export default function CheckoutPage({  logo = "Movies",  }) {
   
   const cartItems=useSelector((state:RootState)=>state.cart.cart)
   const dispatch=useDispatch<AppDispatch>()
@@ -15,7 +15,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
   const [payment, setPayment] = useState("card");
   
 
-  logo = "Mubi"
+  logo = "Movies"
  
 
   return (
@@ -33,7 +33,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
       </header>
 
       <main className="flex-1 max-w-6xl mx-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-  {/* LEFT (2/3): Cart Items List */}
+  
   <section className="lg:col-span-2 space-y-4">
     <h2 className="text-lg font-semibold">Your Items</h2>
 
@@ -49,7 +49,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
       </div>
 
       <div className="flex items-center gap-4 text-">
-        <div className="font-semibold">$9.99</div>
+        <div className="font-semibold">$10</div>
 
         
         <button
@@ -147,7 +147,7 @@ export default function CheckoutPage({  logo = "Mubi",  }) {
 </main>
 
       <footer className="bg-black text-white px-6 py-6 mt-auto">
-        <div className="max-w-6xl mx-auto text-xs">© Mubi</div>
+        <div className="max-w-6xl mx-auto text-xs">© Movies</div>
       </footer>
     </div>
   );

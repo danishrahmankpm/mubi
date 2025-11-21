@@ -5,9 +5,9 @@ import type { Root } from "../types/types.ts";
 
 export const fetchMovie = createAsyncThunk(
   "movie/fetchMovie",
-  async (page:number) => {
+  async ({page,endpoint}:{page:number,endpoint:string}) => {
     const res = await axios.get(
-      "https://api.themoviedb.org/3/movie/popular",
+      `https://api.themoviedb.org/3/movie/${endpoint}`,
       {
         params: {
           language: "en-US",
@@ -25,27 +25,29 @@ export interface MovieState {
   data: Root| null;
   loading: boolean;
   error: string | null;
+  sortByEndpoint:string
 }
 
 const initialState: MovieState = {
   data: null,
   loading: false,
   error: null,
+  sortByEndpoint:"popular"
 };
 
 const movieSlice = createSlice({
   name: "movie",
   initialState,
   reducers: {
-    clearMovie(state) {
-      state.data = null;
-      state.error = null;
-      state.loading = false;
-    },
+    
     setMovie(state, action: PayloadAction<Movie[]>) {
       if(state.data)state.data.results = action.payload;
       
     },
+    setEndpoint(state, action: PayloadAction<string>) {
+      state.sortByEndpoint = action.payload;
+  }
+
     
   },
   extraReducers: (builder) => {
@@ -70,5 +72,5 @@ const movieSlice = createSlice({
   },
 });
 
-export const { clearMovie, setMovie } = movieSlice.actions;
+export const {  setMovie,setEndpoint } = movieSlice.actions;
 export default movieSlice.reducer;
