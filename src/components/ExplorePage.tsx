@@ -30,6 +30,7 @@ export default function ExplorePage() {
   
 
   if (loading || isLoading || !page || !movies) {
+    console.log("here")
     return <LoadingPage />;
   }
   const filteredMovies = movies.filter((m) =>m.title.toLowerCase().includes(query.toLowerCase()))
@@ -39,7 +40,7 @@ export default function ExplorePage() {
 
 
   return (
-  <div className="min-h-screen bg-black text-white">
+  <div className="min-h-screen min-w-screen bg-black text-white">
     <header className="bg-black border-b border-white/20">
       <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -98,15 +99,19 @@ export default function ExplorePage() {
       </div>
     </section>
 
-    <div className="w-screen flex justify-center">
-      <div className="flex flex-wrap gap-2 justify-center">
+    <div className="w-screen md:w-[80vw] lg:w-[75vw] mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredMovies.map((m) => (
           <MovieCard
             key={m.id}
             id={m.id}
             title={m.title}
-            price={10}
+            
             imgUrl={`https://image.tmdb.org/t/p/w500${m.poster_path}`}
+            overview={m.overview}
+            vote_average={m.vote_average}
+            release_date={m.release_date}
+            original_language={m.original_language}
           />
         ))}
 
