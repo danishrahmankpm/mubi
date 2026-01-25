@@ -5,8 +5,24 @@ import type { Root } from "../types/types.ts";
 
 export const fetchMovie = createAsyncThunk(
   "movie/fetchMovie",
-  async ({page,endpoint}:{page:number,endpoint:string}) => {
-    const res = await axios.get(
+  async ({page,endpoint="popular",searchString}:{page:number,endpoint:string,searchString?:string}) => {
+    let res=null; 
+    if(searchString){
+      res = await axios.get(
+        `https://api.themoviedb.org/3/search/movie`,
+        {
+          params: {
+            language: "en-US",
+            query: searchString,
+            include_adult: false,
+            api_key: "9ad65dc78032dafb93a33fd0c77710d6",
+            
+          },
+        }
+      );
+    }
+    else{
+      res = await axios.get(
       `https://api.themoviedb.org/3/movie/${endpoint}`,
       {
         params: {
@@ -16,6 +32,8 @@ export const fetchMovie = createAsyncThunk(
         },
       }
     );
+    }
+    
 
     return res.data;
   }
@@ -24,15 +42,17 @@ export const fetchMovie = createAsyncThunk(
 export interface MovieState {
   data: Root| null;
   loading: boolean;
+  searchloading:boolean;
   error: string | null;
-  sortByEndpoint:string
+  
 }
 
 const initialState: MovieState = {
   data: null,
   loading: false,
+  searchloading:false,
   error: null,
-  sortByEndpoint:"popular"
+  
 };
 
 const movieSlice = createSlice({
@@ -44,9 +64,10 @@ const movieSlice = createSlice({
       if(state.data)state.data.results = action.payload;
       
     },
-    setEndpoint(state, action: PayloadAction<string>) {
-      state.sortByEndpoint = action.payload;
-  }
+    setSearchLoading(state, action:PayloadAction<boolean>){
+      state.searchloading=action.payload
+    }
+    
 
     
   },
@@ -72,5 +93,5 @@ const movieSlice = createSlice({
   },
 });
 
-export const {  setMovie,setEndpoint } = movieSlice.actions;
+export const {  setMovie,setSearchLoading } = movieSlice.actions;
 export default movieSlice.reducer;

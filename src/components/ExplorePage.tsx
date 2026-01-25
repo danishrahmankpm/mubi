@@ -7,7 +7,8 @@ import MovieCard from "./MovieCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import { MoviePagination } from "./Pagination";
 import LoadingPage from "./LoadingPage";
-import { setEndpoint } from "../state/MovieSlice";
+import { setSearchLoading } from "../state/MovieSlice";
+
 
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
@@ -18,22 +19,26 @@ export default function ExplorePage() {
   const movies = useSelector((state: RootState) => state.movie.data?.results);
   const page = useSelector((state: RootState) => state.movie.data?.page);
   const loading = useSelector((state: RootState) => state.movie.loading);
+  const searchloading = useSelector((state: RootState) => state.movie.searchloading);
   
 
  
   useEffect(() => {
+    if(query){dispatch(setSearchLoading(true));}
+    dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint ,searchString:query}));
     
-    dispatch(setEndpoint(sortByEndpoint))
-    dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint }));
-  }, [dispatch, sortByEndpoint]);
+  }, [dispatch, sortByEndpoint,query]);
 
-  
+  if(!movies){
+    console.log("not movies")
+    return <LoadingPage/>
+  }
 
-  if (loading || isLoading || !page || !movies) {
+  if (loading && !searchloading) {
     console.log("here")
     return <LoadingPage />;
   }
-  const filteredMovies = movies.filter((m) =>m.title.toLowerCase().includes(query.toLowerCase()))
+  
   
 
   
@@ -48,7 +53,11 @@ export default function ExplorePage() {
           <div className="hidden sm:block w-[420px]">
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {setQuery(e.target.value);
+                              dispatch(setSearchLoading(true));
+                              dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint, searchString: e.target.value 
+                                
+                              }))}}
               placeholder="Search"
               className="w-full px-3 py-2 rounded-md border border-white/30 bg-black text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
@@ -101,7 +110,7 @@ export default function ExplorePage() {
 
     <div className="w-screen md:w-[80vw] lg:w-[75vw] mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredMovies.map((m) => (
+        {movies.map((m) => (
           <MovieCard
             key={m.id}
             id={m.id}
@@ -115,7 +124,7 @@ export default function ExplorePage() {
           />
         ))}
 
-        {filteredMovies.length === 0 && (
+        {movies.length === 0 && (
           <div className="mt-16 text-center text-white/60 text-lg">
             No films match your filters.
           </div>
