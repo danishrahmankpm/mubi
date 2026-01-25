@@ -13,6 +13,7 @@ import { setSearchLoading } from "../state/MovieSlice";
 export default function ExplorePage() {
   const [query, setQuery] = useState("");
   const [sortByEndpoint, setSortByEndpoint] = useState("popular"); 
+  
 
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
@@ -24,10 +25,10 @@ export default function ExplorePage() {
 
  
   useEffect(() => {
-    if(query){dispatch(setSearchLoading(true));}
-    dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint ,searchString:query}));
     
-  }, [dispatch, sortByEndpoint,query]);
+    dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint }));
+    
+  }, [dispatch, sortByEndpoint]);
 
   if(!movies){
     console.log("not movies")
@@ -65,15 +66,12 @@ export default function ExplorePage() {
         </div>
 
         <div className="flex gap-6 items-center text-sm text-white/70">
-          {!isAuthenticated ? (
-            <button onClick={() => loginWithRedirect()} className="hover:underline">
-              CART
+          <button className="hover:underline" onClick={() => loginWithRedirect()}>
+              FAVOURITES
             </button>
-          ) : (
-            <Link to="/checkout" className="hover:underline">
-              CART
-            </Link>
-          )}
+            <button className="hover:underline" onClick={() => loginWithRedirect()}>
+              LISTS
+            </button>
           {!isAuthenticated && (
             <button className="hover:underline" onClick={() => loginWithRedirect()}>
               LOG IN
@@ -89,24 +87,46 @@ export default function ExplorePage() {
         Browse genres. Find films you didn't know you were looking for.
       </p>
     </section>
-
-    <section className="max-w-7xl mx-auto px-6">
-      <div className="bg-black p-6 rounded-md shadow-sm border-none">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-white/70">SORT BY:</div>
-            <select
-              value={sortByEndpoint}
-              onChange={(e) => setSortByEndpoint(e.target.value)}
-              className="px-3 py-2 border border-white/30 rounded-md bg-black text-white"
-            >
-              <option value="popular">Popular</option>
-              <option value="top_rated">Rating</option>
-            </select>
+    {!query && (
+        <section className="max-w-7xl mx-auto px-6">
+          <div className="bg-black p-6 rounded-md shadow-sm border-none">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-white/70">SORT BY:</div>
+                <select
+                  value={sortByEndpoint}
+                  onChange={(e) => setSortByEndpoint(e.target.value)}
+                  className="px-3 py-2 border border-white/30 rounded-md bg-black text-white"
+                >
+                  <option value="popular">Popular</option>
+                  <option value="top_rated">Rating</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      )}
+      {query && (
+        <section className="max-w-7xl mx-auto px-6">
+          <div className="bg-black p-6 rounded-md shadow-sm border-none">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-white/70">SORT BY:</div>
+                <select
+                  value={sortByEndpoint}
+                  onChange={(e) => setSortByEndpoint(e.target.value)}
+                  className="px-3 py-2 border border-white/30 rounded-md bg-black text-white"
+                >
+                  <option value="popular">Popular</option>
+                  <option value="top_rated">Rating</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    
+    
 
     <div className="w-screen md:w-[80vw] lg:w-[75vw] mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

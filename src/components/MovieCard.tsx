@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function MovieCard({ imgUrl, title, id, overview, vote_average,release_date, original_language }: {
   imgUrl: string;
   title: string;
@@ -13,9 +15,11 @@ export default function MovieCard({ imgUrl, title, id, overview, vote_average,re
   
 
   return (
+
     <div className=" flex flex-col shrink-0 ">
-      <div className="m-1">
-        <button className="relative block w-full overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-transform">
+      <Link to={`/movie/${id}`}>
+      <div className="m-1 cursor-pointer">
+        <button className="relative block w-full overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-transform cursor-pointer">
           <img
             src={imgUrl}
             alt={title}
@@ -32,13 +36,14 @@ export default function MovieCard({ imgUrl, title, id, overview, vote_average,re
 
           
           <div className="absolute bottom-2 left-2 text-white leading-5">
-            <div className="font-bold text-base tracking-tight">
+            <div className="font-bold text-base tracking-tight cursor-pointer">
               {title}
             </div>
             
           </div>
         </button>
       </div>
+      </Link>
 
      
       <div className="mt-3 flex items-center justify-start gap-2 text-sm w-full">

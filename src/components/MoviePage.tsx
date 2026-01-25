@@ -1,6 +1,12 @@
+import type { RootState } from "@/state/Store";
 import React from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-export default function MovieDetailPage() {
+export default function MoviePage() {
+    const {id}=useParams()
+    const movieId = Number(id)
+    const movie = useSelector((state: RootState) => state.movie.data?.results.find(m => m.id === movieId));
   return (
     <div className="min-h-screen bg-black text-white flex justify-center px-4 py-8">
       {/* Page Container */}
@@ -10,7 +16,7 @@ export default function MovieDetailPage() {
         <div className="relative w-full h-[360px] rounded-xl overflow-hidden bg-neutral-800">
           {/* Cover Image */}
           <img
-            src="https://via.placeholder.com/1200x500"
+            src={`https://image.tmdb.org/t/p/w500${movie?.poster_path}`}
             alt="Cover"
             className="w-full h-full object-cover"
           />
@@ -23,7 +29,7 @@ export default function MovieDetailPage() {
 
           {/* Title */}
           <div className="absolute bottom-4 left-4 bg-black/70 px-4 py-2 rounded-lg">
-            <h1 className="text-xl font-semibold">Movie Title</h1>
+            <h1 className="text-xl font-semibold">{movie?.title}</h1>
           </div>
         </div>
 
@@ -34,8 +40,7 @@ export default function MovieDetailPage() {
           <div className="lg:col-span-2 bg-neutral-900 rounded-xl p-5">
             <h2 className="text-lg font-semibold mb-2">Description</h2>
             <p className="text-sm text-white/70 leading-relaxed">
-              This is the movie description. It gives an overview of the plot,
-              themes, and what viewers can expect from the film.
+              {movie?.overview}
             </p>
           </div>
 

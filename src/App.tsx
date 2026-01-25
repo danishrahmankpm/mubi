@@ -3,6 +3,8 @@ import ExplorePage from "./components/ExplorePage";
 import Checkout from "./components/Checkout";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
+import MoviePage from "./components/MoviePage";
+
 function App() {
   return (
     <Routes>
@@ -16,6 +18,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/movie/:id" element={<MoviePage />} />
     </Routes>
   );
 }
