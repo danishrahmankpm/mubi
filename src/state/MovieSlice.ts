@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import type { Movie } from "../types/types.ts";
+
 import type { Root } from "../types/types.ts";
 
 export const fetchMovie = createAsyncThunk(
@@ -19,6 +19,7 @@ export const fetchMovie = createAsyncThunk(
             
           },
         }
+        
       );
     }
     else{
@@ -60,10 +61,7 @@ const movieSlice = createSlice({
   initialState,
   reducers: {
     
-    setMovie(state, action: PayloadAction<Movie[]>) {
-      if(state.data)state.data.results = action.payload;
-      
-    },
+    
     setSearchLoading(state, action:PayloadAction<boolean>){
       state.searchloading=action.payload
     }
@@ -93,5 +91,5 @@ const movieSlice = createSlice({
   },
 });
 
-export const {  setMovie,setSearchLoading } = movieSlice.actions;
+export const { setSearchLoading } = movieSlice.actions;
 export default movieSlice.reducer;

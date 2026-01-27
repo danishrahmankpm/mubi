@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMovie } from "../state/MovieSlice";
 import type { AppDispatch, RootState } from "../state/Store";
-import { Link } from "react-router-dom";
 import MovieCard from "./MovieCard";
-import { useAuth0 } from "@auth0/auth0-react";
 import { MoviePagination } from "./Pagination";
 import LoadingPage from "./LoadingPage";
 import { setSearchLoading } from "../state/MovieSlice";
+import {CreateRequestToken} from "@/state/AuthenticationSlice";
+
+
 
 
 export default function ExplorePage() {
@@ -16,14 +17,26 @@ export default function ExplorePage() {
   
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+  
   const movies = useSelector((state: RootState) => state.movie.data?.results);
-  const page = useSelector((state: RootState) => state.movie.data?.page);
+  const isAuthenticated=useSelector((state:RootState)=>state.auth.isAuthenticated)
   const loading = useSelector((state: RootState) => state.movie.loading);
   const searchloading = useSelector((state: RootState) => state.movie.searchloading);
+  const requestTokenAcquired=useSelector((state:RootState)=>state.auth.requestTokenAcquired);
+  const request_token=useSelector((state:RootState)=>state.auth.requestTokenData?.request_token);
   
 
- 
+
+
+
+
+  
+
+  useEffect(() => {
+    if (requestTokenAcquired && request_token) {
+      window.location.href = `https://www.themoviedb.org/authenticate/${request_token}?redirect_to=http://localhost:5173/authcallback`;
+    }
+  }, [requestTokenAcquired, request_token]);
   useEffect(() => {
     
     dispatch(fetchMovie({ page: 1, endpoint: sortByEndpoint }));
@@ -66,16 +79,19 @@ export default function ExplorePage() {
         </div>
 
         <div className="flex gap-6 items-center text-sm text-white/70">
-          <button className="hover:underline" onClick={() => loginWithRedirect()}>
+          <button className="hover:underline">
               FAVOURITES
             </button>
-            <button className="hover:underline" onClick={() => loginWithRedirect()}>
+            <button className="hover:underline">
               LISTS
             </button>
           {!isAuthenticated && (
-            <button className="hover:underline" onClick={() => loginWithRedirect()}>
+            <button
+              className="hover:underline"
+              onClick={() => dispatch(CreateRequestToken())}
+            >
               LOG IN
-            </button>
+          </button>
           )}
         </div>
       </div>

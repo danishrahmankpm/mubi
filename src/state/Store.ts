@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import movieSliceReducer from "./MovieSlice"
-import cartSliceReducer from "./CartSlice"
+
+import authSliceReducer from "./AuthenticationSlice"
 
 
 export const store=configureStore({
     reducer:{
         movie:movieSliceReducer,
-        cart:cartSliceReducer
+        auth:authSliceReducer
     }
 })
 export type RootState= ReturnType<typeof store.getState>

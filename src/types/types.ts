@@ -26,3 +26,12 @@ export type Cart={
   cart:Movie[],
   totalPrice:number
 }
+export type RequestTokenResponse={
+  success:boolean,
+  request_token:string
+  expires_at:string
+}
+export type SessionIdResponse={
+  success:boolean,
+  session_id:string
+}
